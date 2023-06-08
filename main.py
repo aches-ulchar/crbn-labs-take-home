@@ -16,3 +16,15 @@ def discount(cash_amount: int, discount: int) -> int:
     return (cash_amount * discount) // 100 # Half penny truncated using floor div
 
 # ==========================================
+
+available_items = [
+        {"item_id": "shirt_1", "price": 8},
+        {"item_id": "shirt_2", "price": 8},
+        {"item_id": "shirt_3", "price": 8},
+        {"item_id": "shirt_4", "price": 8},
+        {"item_id": "shirt_5", "price": 8},
+        ]
+
+def get_total_discount(shopping_cart, items):
+    return 0
+
