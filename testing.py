@@ -77,6 +77,38 @@ class TestDiscountMethods(unittest.TestCase):
                 "shirt_4": {"item_name": "Shirt 4", "price": 800},
                 "shirt_5": {"item_name": "Shirt 5", "price": 800},
                 }
+        self.discounts = main.DiscountEnvironment()
+        self.discounts.env = [
+                main.Discount(
+                    "shirt20",
+                    "buy 5 dif shirts get 20% off",
+                    lambda items : main.count_unique_values(items) >= 5,
+                    lambda items : main.discount(main.sum_items_price(main.get_unique_values(5, items), self.available_items), 20),
+                    lambda items : main.remove_unique_values(5, items)
+                    ),
+                main.Discount(
+                    "shirt15",
+                    "buy 4 dif shirts get 15% off",
+                    lambda items : main.count_unique_values(items) >= 4,
+                    lambda items : main.discount(main.sum_items_price(main.get_unique_values(4, items), self.available_items), 15),
+                    lambda items : main.remove_unique_values(4, items)
+                    ),
+                main.Discount(
+                    "shirt10",
+                    "buy 3 dif shirts get 10% off",
+                    lambda items : main.count_unique_values(items) >= 3,
+                    lambda items : main.discount(main.sum_items_price(main.get_unique_values(3, items), self.available_items), 10),
+                    lambda items : main.remove_unique_values(3, items)
+                    ),
+                main.Discount(
+                    "shirt5",
+                    "buy 2 dif shirts get 5% off",
+                    lambda items : main.count_unique_values(items) >= 2,
+                    lambda items : main.discount(main.sum_items_price(main.get_unique_values(2, items), self.available_items), 5),
+                    lambda items : main.remove_unique_values(2, items)
+                    )
+                ]
+
 
     def test_get_total_discount_basic(self):
         self.shopping_cart = ["shirt_1",
@@ -88,14 +120,14 @@ class TestDiscountMethods(unittest.TestCase):
                               "shirt_4",
                               "shirt_5"]
 
-        self.assertEqual(main.get_total_discount(self.shopping_cart, self.available_items), 1040)
+        self.assertEqual(main.get_total_discount(self.shopping_cart, self.available_items, self.discounts), 1040)
 
     def test_get_total_discount_edge(self):
         self.shopping_cart = []
 
-        self.assertEqual(main.get_total_discount(self.shopping_cart, self.available_items), 0)
+        self.assertEqual(main.get_total_discount(self.shopping_cart, self.available_items, self.discounts), 0)
 
         for x in range(0, 30):
             self.shopping_cart.append("shirt_1")
 
-        self.assertEqual(main.get_total_discount(self.shopping_cart, self.available_items), 0)
+        self.assertEqual(main.get_total_discount(self.shopping_cart, self.available_items, self.discounts), 0)

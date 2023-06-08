@@ -103,7 +103,28 @@ def remove_unique_values(n: int, values: list):
     for item in unique_items:
         values.remove(item)
 
-def get_total_discount(shopping_cart: list, items: dict) -> int:
+class Discount():
+    def __init__(self,
+                 d_id,
+                 description,
+                 check_valid,
+                 get_discount,
+                 side_effect):
+
+        self.id = d_id
+        self.description = description
+        self.check_valid = check_valid
+        self.get_discount = get_discount
+        self.side_effect = side_effect
+
+class DiscountEnvironment():
+    def __init__(self):
+        self.env = []
+
+    def add_discount(self, new_discount: Discount):
+        self.env.append(new_discount)
+
+def get_total_discount(shopping_cart: list, items: dict, discounts: DiscountEnvironment) -> int:
     """
     Returns the total discount of items in a list
 
@@ -119,26 +140,22 @@ def get_total_discount(shopping_cart: list, items: dict) -> int:
     total_discount = 0
     unique_values = None
 
-    while(len(undiscounted_items) != 0):
-        if(count_unique_values(undiscounted_items) >= 5):
-            unique_values = get_unique_values(5, undiscounted_items)
-            total_discount += discount(sum_items_price(unique_values, items), 20)
-            remove_unique_values(5, undiscounted_items)
-        elif(count_unique_values(undiscounted_items) >= 4):
-            unique_values = get_unique_values(4, undiscounted_items)
-            total_discount += discount(sum_items_price(unique_values, items), 15)
-            remove_unique_values(4, undiscounted_items)
-        elif(count_unique_values(undiscounted_items) >= 3):
-            unique_values = get_unique_values(3, undiscounted_items)
-            total_discount += discount(sum_items_price(unique_values, items), 10)
-            remove_unique_values(3, undiscounted_items)
-        elif(count_unique_values(undiscounted_items) >= 2):
-            unique_values = get_unique_values(2, undiscounted_items)
-            total_discount += discount(sum_items_price(unique_values, items), 5)
-            remove_unique_values(2, undiscounted_items)
-        else:
-            # no applicable discounts
+    while(undiscounted_items != None):
+
+        valid_discounts = [d for d in discounts.env if d.check_valid(undiscounted_items)]
+
+        if len(valid_discounts) == 0:
+            # No valid discounts
             break
+
+        calc_discounts = map(lambda d : {"discount_total": d.get_discount(undiscounted_items),
+                                         "discount_object": d}, valid_discounts)
+
+        largest_discount = max(calc_discounts, key = lambda dd : dd["discount_total"])
+
+        total_discount += largest_discount["discount_total"]
+
+        largest_discount["discount_object"].side_effect(undiscounted_items)
 
     return total_discount
 
@@ -153,6 +170,38 @@ if __name__ == "__main__":
             "shirt_5": {"item_name": "Shirt 5", "price": 800},
             }
 
+    discounts = DiscountEnvironment()
+    discounts.env = [
+            Discount(
+                "shirt20",
+                "buy 5 dif shirts get 20% off",
+                lambda items : count_unique_values(items) >= 5,
+                lambda items : discount(sum_items_price(get_unique_values(5, items), available_items), 20),
+                lambda items : remove_unique_values(5, items)
+                ),
+            Discount(
+                "shirt15",
+                "buy 4 dif shirts get 15% off",
+                lambda items : count_unique_values(items) >= 4,
+                lambda items : discount(sum_items_price(get_unique_values(4, items), available_items), 15),
+                lambda items : remove_unique_values(4, items)
+                ),
+            Discount(
+                "shirt10",
+                "buy 3 dif shirts get 10% off",
+                lambda items : count_unique_values(items) >= 3,
+                lambda items : discount(sum_items_price(get_unique_values(3, items), available_items), 10),
+                lambda items : remove_unique_values(3, items)
+                ),
+            Discount(
+                "shirt5",
+                "buy 2 dif shirts get 5% off",
+                lambda items : count_unique_values(items) >= 2,
+                lambda items : discount(sum_items_price(get_unique_values(2, items), available_items), 5),
+                lambda items : remove_unique_values(2, items)
+                )
+            ]
+
     shopping_cart = []
 
     print(prompt.INTRO)
@@ -165,7 +214,7 @@ if __name__ == "__main__":
             quit()
         elif user_in[0].startswith("d"):
             price = sum_items_price(shopping_cart, available_items)
-            current_discount = get_total_discount(shopping_cart, available_items)
+            current_discount = get_total_discount(shopping_cart, available_items, discounts)
             print("Original Price:", cash_to_string(price), "Total Discount:", cash_to_string(current_discount), "Total After Discount:", cash_to_string(price-current_discount))
         elif user_in[0].startswith("c"):
             for item in set(shopping_cart):
