@@ -76,3 +76,49 @@ def get_total_discount(shopping_cart, items):
 
     return total_discount
 
+if __name__ == "__main__":
+    import prompt
+
+    available_items = {
+            "shirt_1": {"item_name": "Shirt 1", "price": 800},
+            "shirt_2": {"item_name": "Shirt 2", "price": 800},
+            "shirt_3": {"item_name": "Shirt 3", "price": 800},
+            "shirt_4": {"item_name": "Shirt 4", "price": 800},
+            "shirt_5": {"item_name": "Shirt 5", "price": 800},
+            }
+
+    shopping_cart = []
+
+    print(prompt.INTRO)
+
+    while True:
+        user_in = input("> ").lower().split()
+        if user_in[0].startswith("h"):
+            print(prompt.HELP)
+        elif user_in[0].startswith("q"):
+            quit()
+        elif user_in[0].startswith("d"):
+            price = sum_items_price(shopping_cart, available_items)
+            current_discount = get_total_discount(shopping_cart, available_items)
+            print("Original Price:", cash_to_string(price), "Total Discount:", cash_to_string(current_discount), "Total After Discount:", cash_to_string(price-current_discount))
+        elif user_in[0].startswith("c"):
+            for item in set(shopping_cart):
+                print(item + ":", shopping_cart.count(item))
+        elif user_in[0].startswith("l"):
+            for k, v in available_items.items():
+                print("Item Name:", v["item_name"], "\t Item ID:", k, "\t Price:", cash_to_string(v["price"]))
+        elif user_in[0].startswith("a"):
+            if len(user_in) > 1 and user_in[1] in available_items:
+                if len(user_in) > 2:
+                    try:
+                        for x in range(0, int(user_in[2])):
+                            shopping_cart.append(user_in[1])
+                    except ValueError:
+                        print("error: n is not a proper integer")
+                else:
+                    shopping_cart.append(user_in[1])
+
+            else:
+                print("USAGE: > a <item_id> [n]")
+
+
