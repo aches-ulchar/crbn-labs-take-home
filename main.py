@@ -16,7 +16,7 @@ def sum_items_price(item_ids, items):
     total = 0
 
     for item_id in item_ids:
-        total += available_items[item_id]["price"]
+        total += items[item_id]["price"]
 
     return total
 
@@ -47,14 +47,6 @@ def remove_unique_values(n: int, values: list):
 
     for item in unique_items:
         values.remove(item)
-
-available_items = {
-        "shirt_1": {"item_name": "Shirt 1", "price": 800},
-        "shirt_2": {"item_name": "Shirt 2", "price": 800},
-        "shirt_3": {"item_name": "Shirt 3", "price": 800},
-        "shirt_4": {"item_name": "Shirt 4", "price": 800},
-        "shirt_5": {"item_name": "Shirt 5", "price": 800},
-        }
 
 def get_total_discount(shopping_cart, items):
     undiscounted_items = shopping_cart.copy()
