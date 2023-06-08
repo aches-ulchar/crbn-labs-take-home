@@ -16,13 +16,13 @@ class TestCashMethods(unittest.TestCase):
 
 class TestDiscountMethods(unittest.TestCase):
     def setUp(self):
-        self.available_items = [
-                {"item_id": "shirt_1", "price": 8},
-                {"item_id": "shirt_2", "price": 8},
-                {"item_id": "shirt_3", "price": 8},
-                {"item_id": "shirt_4", "price": 8},
-                {"item_id": "shirt_5", "price": 8},
-                ]
+        self.available_items = {
+                "shirt_1": {"item_name": "Shirt 1", "price": 8},
+                "shirt_2": {"item_name": "Shirt 2", "price": 8},
+                "shirt_3": {"item_name": "Shirt 3", "price": 8},
+                "shirt_4": {"item_name": "Shirt 4", "price": 8},
+                "shirt_5": {"item_name": "Shirt 5", "price": 8},
+                }
 
     def test_get_total_discount(self):
         self.shopping_cart = ["shirt_1",
