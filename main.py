@@ -5,6 +5,15 @@
 # Half pennies will be truncated down to nearest integer value
 
 def cash_to_string(cash: int) -> str:
+    """
+    Turn an integer representing number of pennies into a
+    string representing dollars and cents
+
+    :param int cash: the number of pennies
+
+    :return: a string representation of dollars and cents
+    :rtype: str
+    """
 
     if cash < 0:
         raise ValueError("Value cash must be a positive integer")
@@ -12,7 +21,18 @@ def cash_to_string(cash: int) -> str:
     integer_string = f"{cash:03d}"
     return "$" + integer_string[0:-2] + "." + integer_string[-2:]
 
-def sum_items_price(item_ids, items):
+def sum_items_price(item_ids: list, items: dict) -> int:
+    """
+    Get the total value of the items in cents
+
+    :param list item_ids: a list of the items in the shopping card
+    represented by item id strings
+    :param items dict: a dictionary indexed by item ids containing the
+    available products
+
+    :return: the value of the items in cents
+    :rtype: int
+    """
     total = 0
 
     for item_id in item_ids:
@@ -21,6 +41,15 @@ def sum_items_price(item_ids, items):
     return total
 
 def discount(cash_amount: int, discount: int) -> int:
+    """
+    Get the discount off a cash amount using a percentage
+
+    :param int cash_amount: the amount of the transaction in cents
+    :param int discount: the discount as a percentage, given as an integer
+
+    :return: the discount amount (not the price after discount)
+    :rtype: int
+    """
     return (cash_amount * discount) // 100 # Half penny truncated using floor div
 
 # ==========================================
@@ -28,10 +57,29 @@ def discount(cash_amount: int, discount: int) -> int:
 
 # List Utility Functions ===================
 
-def count_unique_values(values: int) -> int:
+def count_unique_values(values: list) -> int:
+    """
+    Counts the number of unique items in a list
+
+    :param list values: a list of items, potentially containing duplicates
+
+    :return: the number of unique values in the list
+    :rtype: int
+    """
     return len(set(values)) # Converting a list to set removes duplicates
 
 def get_unique_values(n: int, values: list) -> list:
+    """
+    Retrieves a sample of n unique values from a list, leaving the
+    input list unaltered
+
+    :param int n: a positive integer representing the number of unique
+    values to sample
+    :param list values: the list to sample unique values from
+
+    :return: a list of unique values from the original input list
+    :rtype: list
+    """
     unique_items = list(set(values)) # Converting a list to set removes duplicates
 
     if count_unique_values(values) < n:
@@ -43,12 +91,30 @@ def get_unique_values(n: int, values: list) -> list:
 
 # Mutates given list
 def remove_unique_values(n: int, values: list):
+    """
+    Removes n unique values from the provided list by MUTATING
+    the passed list
+
+    :param int n: the number of unique values to remove
+    :param list values: the list to perform the operation on
+    """
     unique_items = get_unique_values(n, values)
 
     for item in unique_items:
         values.remove(item)
 
-def get_total_discount(shopping_cart, items):
+def get_total_discount(shopping_cart: list, items: dict) -> int:
+    """
+    Returns the total discount of items in a list
+
+    :param list shopping_cart: a list of items representing the items
+    being purchased by the customer
+    :param dict items: a dictionary indexed by item ids containing the
+    available products
+
+    :return: the total discount applied to the purchase
+    :rtype: int
+    """
     undiscounted_items = shopping_cart.copy()
     total_discount = 0
     unique_values = None
@@ -120,5 +186,3 @@ if __name__ == "__main__":
 
             else:
                 print("USAGE: > a <item_id> [n]")
-
-
